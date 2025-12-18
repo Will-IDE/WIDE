@@ -3,7 +3,6 @@
 <head>
   <meta charset="UTF-8">
   <title>My Python IDE</title>
-  <!-- Dark theme styling -->
   <style>
     body {
       font-family: monospace;
@@ -38,7 +37,7 @@
       border: 1px solid #333;
       padding: 10px;
       overflow: auto;
-      white-space: pre-wrap;
+      white-space: pre-wrap; /* ensures newlines work */
     }
 
     #runBtn {
@@ -47,40 +46,67 @@
       font-size: 16px;
       cursor: pointer;
     }
+
+    #inputBox {
+      width: 80%;
+      padding: 5px;
+      margin-top: 5px;
+      font-family: monospace;
+      font-size: 16px;
+      display: none; /* hidden until needed */
+    }
   </style>
 
-  <!-- Skulpt Python in-browser -->
+  <!-- Skulpt -->
   <script src="https://cdn.jsdelivr.net/npm/skulpt@1.2.0/dist/skulpt.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/skulpt@1.2.0/dist/skulpt-stdlib.js"></script>
 </head>
 <body>
   <h1>My Python IDE</h1>
 
-  <!-- Editor box -->
   <textarea id="editor" placeholder="Write your Python code here..."></textarea>
-
-  <!-- Run button -->
   <button id="runBtn">Run Python</button>
 
-  <!-- Output window -->
   <h2>Output:</h2>
   <pre id="output"></pre>
 
-  <!-- JavaScript to run Python -->
+  <!-- Optional input box for inline input -->
+  <input id="inputBox" placeholder="Type input and press Enter" />
+
   <script>
+    const output = document.getElementById("output");
+    const inputBox = document.getElementById("inputBox");
+
     function outf(text) {
-      const output = document.getElementById("output");
       output.textContent += text;
     }
 
-    // Prompt for input
+    let inputResolve = null;
+
+    // Use input box instead of popup
     function builtinInput(promptText) {
-      return window.prompt(promptText || "Input:");
+      output.textContent += promptText; // show prompt in output
+      inputBox.style.display = "block";
+      inputBox.focus();
+
+      return new Promise((resolve) => {
+        inputResolve = resolve;
+      });
     }
+
+    inputBox.addEventListener("keydown", function(e) {
+      if (e.key === "Enter" && inputResolve) {
+        const value = inputBox.value + "\n";
+        outf(value); // show user input in output
+        inputBox.value = "";
+        inputBox.style.display = "none";
+        inputResolve(value.trim());
+        inputResolve = null;
+      }
+    });
 
     function runCode() {
       const prog = document.getElementById("editor").value;
-      const output = document.getElementById("output");
       output.textContent = ""; // clear previous output
 
       Sk.configure({
@@ -92,21 +118,8 @@
 
       Sk.misceval.asyncToPromise(function() {
         return Sk.importMainWithBody("<stdin>", false, prog, true);
-      }).catch(function(err){
-        output.textContent += err.toString();
-      });
-    }
+      }).catch(function
 
-    function builtinRead(x){
-      if (Sk.builtinFiles === undefined || Sk.builtinFiles["files"][x] === undefined)
-        throw "File not found: '" + x + "'";
-      return Sk.builtinFiles["files"][x];
-    }
-
-    document.getElementById("runBtn").addEventListener("click", runCode);
-  </script>
-</body>
-</html>
 
 
 

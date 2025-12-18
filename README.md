@@ -1,2 +1,2 @@
 # WIDE
-A free online python IDE
+Welcome to WIDE an online IDE - Language - Python

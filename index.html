@@ -52,8 +52,13 @@
       font-size: 16px;
       font-family: monospace;
       margin-top: 5px;
-      display: none;
+      display: none:
     }
+    .CodeMirror,
+.CodeMirror-scroll {
+  height: 300px !important;
+}
+
   </style>
 
   <!-- Skulpt -->
@@ -142,6 +147,23 @@
 
     document.getElementById("runBtn").addEventListener("click", runCode);
   </script>
+  <script>
+  const editor = CodeMirror.fromTextArea(
+    document.getElementById("editor"),
+    {
+      mode: "python",
+      theme: "dracula",
+      lineNumbers: true,
+      indentUnit: 4,
+      tabSize: 4
+    }
+  );
+
+  setTimeout(() => {
+    editor.refresh();
+  }, 0);
+</script>
+
 </body>
 </html>
 
